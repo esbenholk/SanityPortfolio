@@ -3,14 +3,13 @@ import { NavLink } from "react-router-dom";
 
 import AppContext from "../globalState";
 
-// import useWindowDimensions from "./functions/useWindowDimensions";
+import useWindowDimensions from "./functions/useWindowDimensions";
 
 export default function Header() {
   const myContext = useContext(AppContext);
   const info = myContext.siteSettings;
 
-  // const { height, width } = useWindowDimensions();
-  const width = 700;
+  const { width } = useWindowDimensions();
 
   return (
     <>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import sanityClient from "../client";
 import { useParams } from "react-router-dom";
 import BlockContent from "@sanity/block-content-to-react";
-import PostCard from "./blocks/postCard.js";
+import ProductCard from "./blocks/productCard";
 
 import imageUrlBuilder from "@sanity/image-url";
 import { motion } from "framer-motion";
@@ -34,7 +34,6 @@ export default function SinglePost() {
       )
       .then((data) => {
         setSinglePost(data[0]);
-        console.log("get single post", data[0]);
 
         sanityClient
           .fetch(
@@ -45,8 +44,10 @@ export default function SinglePost() {
             for (let index = 0; index < relatedData.length; index++) {
               const post = relatedData[index];
               if (post.tags.some((r) => data[0].tags.includes(r))) {
-                relatedProjects.push(post);
-                console.log("shares tags", post);
+                if (post.title !== data[0].title) {
+                  relatedProjects.push(post);
+                  console.log("shares tags", post);
+                }
               }
             }
             setRelatedPost(relatedProjects);
@@ -74,30 +75,35 @@ export default function SinglePost() {
               objectPosition: `${singlePost.mainImage.hotspot.x * 100}% ${
                 singlePost.mainImage.hotspot.y * 100
               }%`,
+              width: "100%",
             }}
           />
         ) : (
           <img
             src={urlFor(singlePost.mainImage.asset.url)}
             alt={singlePost.mainImage.alt}
+            style={{ width: "100%" }}
           />
         )}
-        <header>
-          <h1>{singlePost.title}</h1>
-        </header>
+        <motion.h1 className="headline flex-column">
+          {singlePost.title}
+        </motion.h1>
+
         {singlePost.body && (
-          <BlockContent
-            blocks={singlePost.body}
-            projectId="swdt1dj3"
-            dataset="production"
-          />
+          <div className="blockContent">
+            <BlockContent
+              blocks={singlePost.body}
+              projectId="swdt1dj3"
+              dataset="production"
+            />
+          </div>
         )}
       </article>
 
-      <div layout className="post_grid">
+      <div className="horizontalScroll">
         {relatedPost &&
           relatedPost.map((post, index) => (
-            <PostCard post={post} key={index} />
+            <ProductCard post={post} key={index} />
           ))}
       </div>
     </motion.div>
